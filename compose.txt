@@ -1,0 +1,102 @@
+services:
+ backend:
+ build: backend
+ restart: always
+ secrets:
+ - db-password
+ environment:
+ MYSQL_HOST: db
+ networks:
+ - react-spring
+ - spring-mysql
+ depends_on:
+ db:
+ condition: service_healthy
+ db:
+ # We use a mariadb image which supports both amd64 & arm64 architecture
+ image: mariadb:10.6.4-focal
+ # If you really want to use MySQL, uncomment the following line
+ #image: mysql:8.0.19
+ environment:
+ - MYSQL_DATABASE=example
+ - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db-password
+ restart: always
+ healthcheck:
+ test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+ interval: 3s
+ retries: 5
+ start_period: 30s
+ secrets:
+ Sarathkrishnan K - 2101224
+15
+ - db-password
+ volumes:
+ - db-data:/var/lib/mysql
+ networks:
+ - spring-mysql
+ frontend:
+ build:
+ context: frontend
+ target: development
+ ports:
+ - 3000:3000
+ volumes:
+ - ./frontend/src:/code/src
+ - /project/node_modules
+ networks:
+ - react-spring
+ depends_on:
+ - backend
+ expose:
+ - 3306
+ - 33060
+volumes:
+ db-data: {}
+secrets:
+ db-password:
+ file: db/password.txt
+networks:
+ react-spring: {}
+ spring-mysql: {}
+App.tsx
+import React, { useEffect, useState } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+type Greeting = {
+ id: number;
+ name: string;
+};
+function App() {
+ const [greeting, setGreeting] = useState<Greeting>();
+ useEffect(() => {
+ fetch("/api")
+ .then(res => res.json())
+ .then(setGreeting)
+ .catch(console.error);
+ }, [setGreeting]);
+ return (
+ <div className="App">
+ <header className="App-header">
+ <img src={logo} className="App-logo" alt="logo" />
+ {greeting ? (
+ <p>Hello from {greeting.name}</p>
+16
+ ) : (
+ <p>Loading...</p>
+ )}
+ <p>
+ Edit <code>src/App.tsx</code> and save to reload.
+ </p>
+ <a
+ className="App-link"
+ href="https://reactjs.org"
+ target="_blank"
+ rel="noopener noreferrer"
+ >
+ Learn React
+ </a>
+ </header>
+ </div>
+ );
+}
+export default App; 
