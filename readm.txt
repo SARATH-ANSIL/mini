@@ -1,0 +1,50 @@
+<--------EX -1 ---------->
+
+sudo apt install gcc
+gcc hello.c
+./a.out hello.c
+
+<-------EX -4 --------->
+
+git clone https://github.com/zul-m/zul-m.github.io
+cd zul-m.github.io
+docker build -t html:latest .
+docker run -p 8081:80 html:latest
+
+<---------EX - 5----------->
+
+docker images
+docker tag 1e977fd609fb sarath321/html:latest
+docker push sarath321/html:latest
+docker pull sarath321/html:latest
+
+<-------EX - 7 ----------->
+
+git clone https://github.com/docker/multi-container-app
+cd multi-container-app
+docker compose up -d
+
+<-------------EX - 8 ----------->
+
+docker swarm init
+docker service create --name webapp --replicas 3 -p 8080:80 nginx
+docker service scale webapp=5 
+docker service update --image nginx:1.19.8 webapp 
+docker service ls –filter name=webapp 
+docker ps -a
+docker swarm leave --force
+docker system prune -a --volumes
+
+<---------Ex - 10 ----------->
+
+curl.exe -LO "https://dl.k8s.io/release/v1.29.1/bin/windows/amd64/kubectl.exe"
+curl.exe -LO "https://dl.k8s.io/v1.29.1/bin/windows/amd64/kubectl.exe.sha256"
+kubectl version --client
+kubectl version --client --output=yaml
+winget install minikube
+minikube start --driver=docker
+minikube status
+kubectl cluster-info
+kubectl create deployment nginx-deployment --image=nginx
+kubectl get pods
+kubectl expose deployment nginx-deployment --port=80 --type=NodePort
