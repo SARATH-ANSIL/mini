@@ -2,7 +2,7 @@
 
 sudo apt install gcc
 gcc hello.c
-./a.out hello.c
+./a.out
 
 <-------EX -4 --------->
 
